@@ -1,0 +1,52 @@
+heat_template_version: 2015-04-30
+
+description: Simple template to deploy a single compute instance
+
+parameters:
+  key_name:
+    type: string
+    label: Key Name
+    description: Name of key-pair to be used for compute instance
+  image:
+    type: string
+    label: Image ID
+    description: Image to be used for compute instance
+  flavor:
+    type: string
+    label: Instance Type
+    description: Type of instance (flavor) to be used
+  network_id:
+    type: string
+  private_subnet_id:
+    type: string
+  public_net_id:
+    type: string
+
+resources:
+  my_instance:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      networks:
+        - port: { get_resource: my_instance_eth0 }
+      user_data: |
+        #!/bin/bash
+        touch /tmp/test.txt
+  my_instance_eth0:
+    type: "OS::Neutron::Port"
+    properties:
+      network_id: { get_param: network_id }
+      security_groups:
+        - default
+      fixed_ips:
+        - subnet_id: { get_param: private_subnet_id }
+      
+  my_instance_floating_ip:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: { get_param: public_net_id}
+      port_id: { get_resource: my_instance_eth0 }
+
+
