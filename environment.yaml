@@ -1,6 +1,6 @@
 parameters:
   flavor: m1.smallA
-  key_name: guest
+  key_name: guest 
   image: CentOS
   network_id: e048bf7f-c622-4be4-a55f-8584c3ceab63 
   private_subnet_id: 3ffcfcb7-84f3-4220-9aec-f3854467e7df
